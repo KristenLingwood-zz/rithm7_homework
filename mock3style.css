@@ -1,0 +1,39 @@
+.container {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.card {
+  border: 4px solid peachpuff;
+  border-radius: 5px;
+  width: 200px;
+  height: 200px;
+  position: relative;
+}
+
+img {
+  width: 200px;
+  height: 200px;
+  position: absolute;
+}
+
+.card:hover .text {
+  top: 100%;
+}
+
+.text {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  overflow: hidden;
+  text-align: center;
+  transition: top 0.4s, right 0.4s, bottom 0.4s, left 0.4s;
+}
+
+.text {
+  top: 100%;
+}
