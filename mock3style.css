@@ -18,12 +18,12 @@ img {
 }
 
 .card:hover .text {
-  top: 100%;
+  top: 0;
 }
 
 .text {
   position: absolute;
-  top: 0;
+  top: 100%;
   right: 0;
   bottom: 0;
   left: 0;
@@ -32,8 +32,4 @@ img {
   overflow: hidden;
   text-align: center;
   transition: top 0.4s, right 0.4s, bottom 0.4s, left 0.4s;
-}
-
-.text {
-  top: 100%;
 }
