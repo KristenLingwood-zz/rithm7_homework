@@ -1,0 +1,15 @@
+.button {
+  background-color: skyblue;
+  color: white;
+  text-emphasis: bold;
+  font-size: 14pt;
+  padding: 1%;
+  padding-left: 2%;
+  padding-right: 2%;
+  border-radius: 10%;
+}
+
+.button:hover {
+  background-color: blue;
+  cursor: pointer;
+}
