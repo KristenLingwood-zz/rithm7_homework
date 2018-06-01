@@ -18,7 +18,7 @@ console.log(
 
 ES6 Template Literals
 /* es6 goes here */
-console.log(`${name} lives in ${city} and his favorite color is ${favoriteColor})
+console.log(`${name} lives in ${city} and his favorite color is ${favoriteColor});
 
 ES5 Global Constants
 var PI = 3.14;
@@ -39,7 +39,7 @@ var a = obj.numbers.a;
 var b = obj.numbers.b;
 ES6 Object Destructuring
 /* es6 goes here */
-
+var{a, b} = obj.numbers;
 
 ES5 Array Swap
 var arr = [1, 2];
@@ -48,6 +48,7 @@ arr[0] = arr[1];
 arr[1] = temp;
 ES6 One-Line Array Swap with Destructuring
 /* es6 goes here */
+[arr[1], arr[0]] = [arr[0], arr[1]];
 
 ES5 Map Callback
 function double(arr) {
@@ -58,7 +59,7 @@ function double(arr) {
 ES6 Map Callback Shorthand
 /* es6 goes here */
 function double(arr) {
-  return arr.map(val) => val*2;
+  return arr.map(val => val*2);
 }
 
 ES5 Default Arguments
