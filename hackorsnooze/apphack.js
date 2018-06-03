@@ -18,12 +18,25 @@ $('#submitForm').submit(function(e) {
   listNum++;
 });
 
+//star changes to indicate favorite
 $('.list-group').on('click', 'i', function(e) {
   console.log('hi');
   $(this).toggleClass('fas far');
   e.preventDefault();
 });
 
-//make all stories/favorites button show only specified class div items
+//favorites button click should show only favorites
+$('header').on('click', '#favorites', function(e) {
+  $('.far')
+    .closest('div')
+    .hide();
+  e.preventDefault();
+});
 
-//favorites button click should show only items with
+//all stories shows all
+$('header').on('click', '#allstories', function(e) {
+  $('.far')
+    .closest('div')
+    .show();
+  e.preventDefault();
+});
