@@ -1,21 +1,24 @@
-const $giphyHolder = $('.giphy-holder');
-const $searchTerm = $('#searchterm').val();
-
 $('.form-group').on('click', '#search', function(e) {
-  let $giphy = $.get(
-    `https://api.giphy.com/v1/gifs/search?q=dogs&api_key=26JdhLStl0RSgP5KcycfOifzSiOlpa3T`,
+  e.preventDefault();
+  let $searchTerm = $('#searchterm').val();
+  $.getJSON(
+    `https://api.giphy.com/v1/gifs/search?q=d${$searchTerm}&api_key=26JdhLStl0RSgP5KcycfOifzSiOlpa3T`,
 
     function(response) {
-      console.log(response.data[0].embed_url);
-      response.data[0].embed_url;
+      console.log(response.data[0].images.fixed_height.url);
+      let giphy = response.data[0].images.fixed_height.url;
+
+      $('.container').append(`<img src=${giphy}>`);
+      // $('.container').append(`<img src="http://lorempixel.com/400/200">`);
     }
   );
-  $giphyHolder.append(`<img src=${$giphy}>`);
-  $('#searchterm').empty();
-  e.preventDefault();
+  $('#searchterm').val('');
 });
 
 $('.form-group').on('click', '#remove', function() {
   console.log('empty');
-  $giphyHolder.empty();
+  $('.container').empty();
 });
+
+//to do: format input to be centered
+//edge case of no giphy at data[0]
