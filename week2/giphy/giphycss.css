@@ -1,0 +1,17 @@
+header {
+  text-align: center;
+  padding-top: 1%;
+}
+
+body {
+  background-color: lightgray;
+}
+
+#searchterm {
+  width: 40%;
+  margin-bottom: 1%;
+}
+
+.form-group {
+  padding: 2%;
+}
