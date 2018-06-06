@@ -4,14 +4,19 @@ header {
 }
 
 body {
-  background-color: lightgray;
+  background-color: #dee0de;
 }
 
 #searchterm {
-  width: 40%;
+  /* width: 40%; */
   margin-bottom: 1%;
 }
 
 .form-group {
   padding: 2%;
+}
+
+form {
+  display: flex;
+  justify-content: center;
 }
