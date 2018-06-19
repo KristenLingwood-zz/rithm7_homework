@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<form action="{{ url_for('create') }}" method='POST'>
+<div>
+  <label for"name">Name:
+  </label>
+  <input id="name" name="name" type="text" placeholder="Pet name"/>
+</div>
+<div>
+  <label for"species">Species:
+  </label>
+  <input id="species" name="species" type="text" placeholder="species"/>
+</div>
+<div>
+  <label for"breed">Breed:
+  </label>
+  <input id="breed" name="breed" type="text" placeholder="breed"/>
+</div>
+<div>
+  <label for"human">Designated Human:
+  </label>
+  <input id="human" name="human" type="text" placeholder="Name of pet's human"/>
+</div>
+<button type="submit">Add pet</button>
+</form>
+
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h3>Our Pets:</h3>
+
+ <!-- list with each row from the table we make with SQL
+list should show name but link to ID/show -->
+<ul>
+  {% for pet in pets %}
+    <li><a href="{{ url_for('show', id=pet.id) }}">{{ pet.name }}</a></li>
+  {% endfor %}
+</ul>
+
+{% endblock %}

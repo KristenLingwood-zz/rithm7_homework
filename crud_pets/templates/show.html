@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h3>All about {{ pet.name }}:</h3>
+<ul>
+    <li>Name: {{ pet.name }}</li>
+    <li>Species: {{ pet.species }}</li>
+    <li>Breed: {{ pet.breed }}</li>
+    <li>Designated Human: {{ pet.human }}</li>
+</ul>
+<a href="{{ url_for('index') }}">List of pets</a>
+<a href="{{ url_for('edit', id=pet.id) }}">Edit this pet</a>
+<form action="{{ url_for('destroy', id=pet.id) }}?_method=DELETE" method='POST'>
+<button type="submit">Remove pet from list</button>
+</form>
+
+{% endblock %}

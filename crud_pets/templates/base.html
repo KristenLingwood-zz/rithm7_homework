@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Pets We Know</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+</head>
+<body>
+  <h1>Meow, Woof, Chirp, or Roar?</h1>
+  <h2>We love them all.</h3>
+
+  {% block content %}
+  {% endblock %}
+
+
+  <ul>Go To:
+    <div><li><a href="{{ url_for('index') }}">All Pets</li></div>
+    <div><li><a href="{{ url_for('new') }}">Add New Pet</li></div>
+  </ul>
+  <footer>by Kristen Lingwood, for CRUD's sake.</footer>
+</body>
+</html>
