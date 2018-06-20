@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>First Name: {{ user.first_name }}'s Messages:</h2>
+
+<div>
+  <ul>
+  
+    </ul>
+  </div>
+<div>
+  <ul>
+    {% for message in messages %}
+    <li>{{ message.content }}</li>
+    {% endfor %}
+  </ul>
+  
+</div>
+
+<!-- button to delete user -->
+<!-- button to send to edit user -->
+<!-- nav button to main? -->
+
+
+{% endblock %}
+

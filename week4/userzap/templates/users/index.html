@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Current user ZAP users:</h2>
+
+{% for user in users %}
+<li>{{ user.first_name }} {{ user.last_name }}</li>
+
+{% endfor %}
+
+{% endblock %}
