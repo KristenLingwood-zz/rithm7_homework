@@ -4,7 +4,7 @@
 <h2>Current user ZAP users:</h2>
 
 {% for user in users %}
-<li>{{ user.first_name }} {{ user.last_name }}</li>
+<li><a href="{{ url_for('users_show', user_id=user.id) }}">{{ user.first_name }} {{ user.last_name }}</a></li>
 
 {% endfor %}
 

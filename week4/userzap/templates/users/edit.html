@@ -19,11 +19,12 @@
     </label>
     <input id="img_url" name="img_url" type="text" placeholder="image url"/>
   </div>
-  <button type="submit">Update User Info</button>
+  <button type="submit" class="btn btn-primary">Update User Info</button>
+  </form>
 
   <div>
     <form action="{{ url_for('users_show', user_id=user.id) }}?_method=DELETE" method='POST'>
-    <button type="submit">DELETE USER</button>
+    <button type="submit" class="btn btn-danger btn-sm">DELETE USER</button>
     </form>
   </div>
   

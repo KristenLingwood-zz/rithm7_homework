@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+<h2>Create New Tag</h2>
+
+{% block content %}
+<form action="{{ url_for('tags_index')}}" method='POST'>
+  <div>
+    <label for"tag_content">Tag:
+    </label>
+    <input id="tag_content" name="tag_content" type="text" placeholder="new tag"/>
+  </div>
+  
+  </div>
+  <button type="submit" class="btn btn-primary">Create Tag</button>
+  </form>
+
+{% endblock%}

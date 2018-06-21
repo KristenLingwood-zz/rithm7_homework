@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h4>Edit Message</h4>
+
+<form action="{{ url_for('messages_index', user_id=user.id)}}" method='POST'>
+  <div>
+    <label for"message_content">Message:
+    </label>
+    <input id="message_content" name="message_content" type="text" placeholder="Edit message here"/>
+  </div>
+  
+  </div>
+  <button type="submit" class="btn btn-success">Update Message</button>
+  </form>
+
+  <div>
+      <form action="{{ url_for('messages_destroy', user_id=user.id, message_id=message.id) }}?_method=DELETE" method='POST'>
+      <button type="submit" class="btn btn-danger btn-sm">DELETE MESSAGE</button>
+      </form>
+    </div>
+
+{% endblock%}
+
+

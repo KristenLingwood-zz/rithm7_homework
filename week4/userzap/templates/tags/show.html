@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h3>Tag Info</h3>
+<div>
+  <ul>
+    <li>Tag: {{ tag.content }}:</li>
+    </ul>
+  </div>
+
+<div>
+  
+</div>
+
+<div>
+    <form action="{{ url_for('tags_editform', tag_id=tag.id) }}" method='GET'>
+    <button type="submit" class="btn btn-success">Edit Tag</button>
+    </form>
+  </div>
+
+  <div>
+      <form action="{{ url_for('tags_new') }}" method='GET'>
+      <button type="submit" class="btn btn-info">Create New Tag</button>
+      </form>
+    </div>
+
+<div>
+    <form action="{{ url_for('tags_index') }}" method='GET'>
+    <button type="submit" class="btn btn-primary">All tags</button>
+    </form>
+  </div>
+
+{% endblock %}
