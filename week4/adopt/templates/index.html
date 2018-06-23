@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2>Furbabies</h2>
+<!-- list showing pet cards -->
+{% for pet in pets %}
+<div class="card border-primary mb-3" style="max-width: 20rem;">
+  <div class="card-header">{{ pet.name }}</div>
+  <div class="card-body">
+    <h4 class="card-title">All About Me!</h4>
+    <img style="height: 200px; width: 100%; display: block;" src="{{ pet.photo_url }}" alt="Pet image">
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item">Name: {{ pet.name }}</li>
+      <li class="list-group-item">Species: {{ pet.species }}</li>
+      <li class="list-group-item">Age: {{ pet.age }}</li>
+      <p>{% if pet.available %}
+        Available!
+        {% else %}
+        I've already found my forever home.
+        {% endif %}
+      </p>
+    </ul>
+    <div class="card-body">
+      <a href="{{ url_for('pets_edit', pet_id=pet.id) }}" class="card-link">Edit Pet Info</a>
+      <a href="#" class="card-link">Remove Pet Listing</a>
+    </div>
+  </div>
+  {% endfor %}
+  {#
+<!-- old list -->
+<!-- <div>
+  <a href="{{ url_for('pets_show', pet_id=pet.id) }}">Name: {{ pet.name }}</a>
+  <img src= "{{ pet.image_url }}">
+  <p>{% if pet.available %}
+  Available!
+  {% else %}
+  This pet has already found its forever home.
+  {% endif %}
+  {% endfor %}
+</p>
+</div> -->
+
+<!-- petfinder card -->
+#}
+<div>
+  <div class="card border-primary mb-3" style="max-width: 20rem;">
+    <div class="card-header">Featured Petfinder Pet</div>
+    <div class="card-body">
+      <h4 class="card-title">{{ pf_pet_info.name }}</h4>
+      <img style="height: 200px; width: 100%; display: block;" src="{{ pf_pet_info.photo }}" alt="Pet image">
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item">Name: {{ pf_pet_info.name }}</li>
+        <li class="list-group-item">Age: {{ pf_pet_info.age }}</li>
+        <li class="list-group-item">Description: {{ pf_pet_info.description }}</li>
+      </ul>
+  </div>
+</div>
+
+ 
+{% endblock %}

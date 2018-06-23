@@ -38,6 +38,8 @@ class Message(db.Model):
     message_id = db.relationship(
         "Tag", backref="message", lazy="dynamic", cascade='all,delete')
 
+        # check backrefs
+
 
 class Tag(db.Model):
     __tablename__ = "tags"
