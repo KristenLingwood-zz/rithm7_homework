@@ -4,7 +4,7 @@
 
 <h4>Update Info for {{ found_pet.name }}</h4>
 
-<form action="{{ url_for('pets_show', pet_id=found_pet.id) }}?_PATCH" method="POST">
+<form action="{{ url_for('pets_edit', pet_id=found_pet.id) }}" method="POST">
 
 {{ form.hidden_tag() }}
 

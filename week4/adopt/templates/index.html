@@ -8,12 +8,8 @@
 <div class="card border-primary mb-3" style="max-width: 20rem;">
   <div class="card-header">{{ pet.name }}</div>
   <div class="card-body">
-    <h4 class="card-title">All About Me!</h4>
-    <img style="height: 200px; width: 100%; display: block;" src="{{ pet.photo_url }}" alt="Pet image">
+    <img src="{{ pet.photo_url }}" alt="Pet image">
     <ul class="list-group list-group-flush">
-      <li class="list-group-item">Name: {{ pet.name }}</li>
-      <li class="list-group-item">Species: {{ pet.species }}</li>
-      <li class="list-group-item">Age: {{ pet.age }}</li>
       <p>{% if pet.available %}
         Available!
         {% else %}
@@ -23,9 +19,9 @@
     </ul>
     <div class="card-body">
       <a href="{{ url_for('pets_edit', pet_id=pet.id) }}" class="card-link">Edit Pet Info</a>
-      <a href="#" class="card-link">Remove Pet Listing</a>
     </div>
   </div>
+</div>
   {% endfor %}
   {#
 <!-- old list -->

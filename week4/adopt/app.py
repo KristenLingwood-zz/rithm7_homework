@@ -1,17 +1,16 @@
-import sys
-print(sys.path)
-
-import psycopg2
-from flask import Flask, render_template, redirect, request, url_for
+from flask import Flask, render_template, redirect, url_for, flash, jsonify
 from flask_debugtoolbar import DebugToolbarExtension
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import FlaskForm
-from wtforms import StringField, FloatField, BooleanField
-from wtforms.validators import InputRequired, Optional, URL, NumberRange, AnyOf
+from wtforms import StringField, FloatField, BooleanField, TextAreaField, RadioField
+from wtforms.validators import InputRequired, Optional, URL, NumberRange
 import requests
 import os
 
+PLACEHOLDER_IMG = "https://image.freepik.com/free-vector/unicorn-background-design_1324-79.jpg"
+
 app = Flask(__name__)
+
 app.config['SECRET_KEY'] = "abc123"
 pf_api_key = os.environ['PF_API_KEY']
 toolbar = DebugToolbarExtension(app)
@@ -36,19 +35,21 @@ class Pet(db.Model):
     notes = db.Column(db.Text)
     available = db.Column(db.Boolean, default=True)
 
+    def image_url(self):
+        """return the pet image or a placeholder"""
+        # self references instance of class
+        return self.photo_url or PLACEHOLDER_IMG
+
+
+db.create_all()
+
 
 class AddPetForm(FlaskForm):
     """form for adding pets"""
     name = StringField("pet name", validators=[InputRequired()])
-    #    could do radio field species =RadioField("Species", choices=[])
-    species = StringField(
-        "species",
-        validators=[
-            InputRequired(),
-            AnyOf(
-                ['cat', 'dog', 'dragon'],
-                message="please pick a cat, dog, or dragon")
-        ])
+    species = RadioField(
+        "Species",
+        choices=[('cat', 'Cat'), ('dog', 'Dog'), ('dragon', 'Dragon')])
     photo_url = StringField("url", validators=[Optional(), URL()])
     age = FloatField(
         "age",
@@ -61,12 +62,10 @@ class AddPetForm(FlaskForm):
 
 class AddPetEditForm(FlaskForm):
     """form for updating pet info"""
-    photo_url = StringField("url", validators=[Optional(), URL()])
-    notes = StringField("notes")
-    available = BooleanField("Available", validators=[InputRequired()])
-
-
-db.create_all()
+    photo_url = StringField(
+        "url", validators=[Optional(), URL(message="bad url")])
+    notes = TextAreaField("notes", validators=[Optional()])
+    available = BooleanField("Available?")
 
 
 def get_random_petfinder_pet():
@@ -102,23 +101,11 @@ def pets_add():
     form = AddPetForm()
 
     if form.validate_on_submit():
-        name = form.data['name']
-        species = form.data['species']
-        photo_url = form.data['photo_url']
-        age = form.data['age']
-        notes = form.data['notes']
-
-        # data = {k: v for k, v in form.data.items() if k != "csrf_token"}
-        # new_pet = Pet(**data)
-        new_Pet = Pet(
-            name=name,
-            species=species,
-            photo_url=photo_url,
-            age=age,
-            notes=notes)
-        db.session.add(new_Pet)
+        data = {k: v for k, v in form.data.items() if k != "csrf_token"}
+        new_pet = Pet(**data)
+        db.session.add(new_pet)
         db.session.commit()
-        # flash("pet added!")
+        flash("pet added!")
         return redirect(url_for('pets_index'))
 
     else:
@@ -126,13 +113,6 @@ def pets_add():
 
 
 @app.route('/<int:pet_id>', methods=['GET', 'POST'])
-def pets_show(pet_id):
-    """show info for individual pet"""
-    found_pet = Pet.query.get(pet_id)
-    return render_template('show.html', pet=found_pet)
-
-
-@app.route('/<int:pet_id>/edit', methods=['GET', 'PATCH', 'DELETE'])
 def pets_edit(pet_id):
     """update pet info"""
 
@@ -141,18 +121,26 @@ def pets_edit(pet_id):
     form = AddPetEditForm(obj=found_pet)
 
     if form.validate_on_submit():
-        found_pet.photo_url = form.data['photo_url']
-        found_pet.age = form.data['age']
         found_pet.notes = form.data['notes']
+        found_pet.photo_url = form.data['photo_url']
+        found_pet.available = form.data['available']
         db.session.commit()
-        # flash(f"{found_pet.name} updated.") need to import flash
-        return redirect(url_for('pets_show', pet_id=pet_id, form=form))
+        flash(f"{found_pet.name} updated.")
+        return redirect(url_for('pets_index'))
 
     else:
         return render_template('edit.html', form=form, found_pet=found_pet)
 
 
-# @app.route("/api/pets/<int:id>", methods=['GET'])
-# def api_get_pet(pet_id):
-#     pet = Pet.query.get_or_404(pet_id)
-#     info = {"name": pet.name, "age"=pet.age, "photo"=}
+@app.route("/api/pets/<int:pet_id>", methods=['GET'])
+def api_get_pet(pet_id):
+    pet = Pet.query.get_or_404(pet_id)
+    info = {
+        "name": pet.name,
+        "age": pet.age,
+        "photo": pet.photo_url,
+        "notes": pet.notes,
+        "available": pet.available
+    }
+
+    return jsonify(info)
