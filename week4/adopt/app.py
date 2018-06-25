@@ -6,13 +6,15 @@ from wtforms import StringField, FloatField, BooleanField, TextAreaField, RadioF
 from wtforms.validators import InputRequired, Optional, URL, NumberRange
 import requests
 import os
+import websiteconfig
+app.debug = websiteconfig.DEBUG
+app.pf_api_key = websiteconfig.pf_api_key
 
 PLACEHOLDER_IMG = "https://image.freepik.com/free-vector/unicorn-background-design_1324-79.jpg"
 
 app = Flask(__name__)
 
 app.config['SECRET_KEY'] = "abc123"
-pf_api_key = os.environ['PF_API_KEY']
 toolbar = DebugToolbarExtension(app)
 
 DB = "postgresql://localhost/adopt"
