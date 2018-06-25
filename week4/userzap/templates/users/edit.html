@@ -1,23 +1,24 @@
 {% extends 'base.html' %}
 
+{% block content %}
+
 <h2>Edit User Info</h2>
 
-{% block content %}
 <form action="{{url_for('users_show', user_id=user.id)}}?_method=PATCH" method='POST'>
   <div>
     <label for"first_name">First Name:
     </label>
-    <input id="first_name" name="first_name" type="text" placeholder="first name"/>
+    <input id="first_name" name="first_name" type="text" placeholder="first name" value="{{ user.first_name }}"/>
   </div>
   <div>
     <label for"last_name">Last Name:
     </label>
-    <input id="last_name" name="last_name" type="text" placeholder="last name"/>
+    <input id="last_name" name="last_name" type="text" placeholder="last name" value="{{ user.last_name }}"/>
   </div>
   <div>
-    <label for"img_url">Image URL:
+    <label for"img_url" >Image URL:
     </label>
-    <input id="img_url" name="img_url" type="text" placeholder="image url"/>
+    <input id="img_url" name="img_url" type="text" placeholder="image url" value="{{ user.img_url }}"/>
   </div>
   <button type="submit" class="btn btn-primary">Update User Info</button>
   </form>

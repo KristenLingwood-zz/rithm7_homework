@@ -1,8 +1,7 @@
 {% extends 'base.html' %}
 
-<h2>Create New User</h2>
-
 {% block content %}
+<h2>Create New User</h2>
 <form action="{{ url_for('users_index')}}" method='POST'>
   <div>
     <label for"first_name">First Name:

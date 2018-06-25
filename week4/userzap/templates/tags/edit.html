@@ -1,20 +1,36 @@
 {% extends 'base.html' %}
 
+{% block content %}
 <h2>Edit Tag</h2>
 
-{% block content %}
 <form action="{{url_for('tags_show', tag_id=tag.id)}}?_method=PATCH" method='POST'>
     <div>
         <label for"tag_content">Tag:
         </label>
-        <input id="tag_content" name="tag_content" type="text" value="{{ found_tag.tag_content }}"" placeholder="edit tag"/>
+        <input id="tag_content" name="tag_content" type="text" value="{{ tag.tag_content }}" placeholder="edit tag"/>
       </div>
+
+    <div>
+      <h6>Messages</h6>
+      {% for message in messages %}
+      <div>
+        <input type="checkbox" value="{{ message.id }}" id="message_{{ message.id }}" name="messages"
+        {% if message in tag.messages %}
+        checked
+        {% endif %}
+        >
+        <label for="message_{{ message.id }}">
+          "{{ message.content }}" - {{ message.user.first_name }} {{ message.user.last_name }}
+        </label>
+      </div>
+      {% endfor %}
+    </div>
       
   <button type="submit" class="btn btn-primary">Update Tag</button>
   </form>
 
   <div>
-    <form action="{{ url_for('tags_show', tag_id=tag.id) }}?_method=DELETE" method='POST'>
+    <form action="{{ url_for('tags_destroy', tag_id=tag.id) }}?_method=DELETE" method='POST'>
     <button type="submit" class="btn btn-danger btn-sm">DELETE TAG</button>
     </form>
   </div>

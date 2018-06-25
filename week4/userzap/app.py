@@ -35,34 +35,33 @@ class Message(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.Text, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    message_id = db.relationship(
-        "Tag", backref="message", lazy="dynamic", cascade='all,delete')
 
-        # check backrefs
+
+message_tags = db.Table(
+    'message_tags',
+    db.Column('message_id', db.Integer, db.ForeignKey('messages.id')),
+    db.Column('tag_id', db.Integer, db.ForeignKey('tags.id')))
 
 
 class Tag(db.Model):
     __tablename__ = "tags"
 
     id = db.Column(db.Integer, primary_key=True)
-    content = db.Column(db.Text, nullable=False)
-    message_id = db.relationship(
-        'Message', backref='tag', lazy='dynamic', cascade='all,delete')
+    content = db.Column(db.Text, nullable=False, unique=True)
+    messages = db.relationship(
+        'Message',
+        lazy="dynamic",
+        secondary=message_tags,
+        cascade="all,delete",
+        backref=db.backref('tags', lazy="dynamic"))
 
-
-message_tag = db.Table(
-    "message_tag", db.Column("id", db.Integer, primary_key=True),
-    db.Column('message_id', db.Integer,
-              db.ForeignKey('messages.id', ondelete="CASCADE")),
-    db.Column('tag_id', db.Integer, db.ForeignKey(
-        'tags.id', ondelete="CASCADE")))
 
 db.create_all()
 
 
 @app.route('/')
 def root():
-    return "Usersapp...user zap... get it?"
+    return redirect(url_for('users_index'))
 
 
 @app.route('/users')
@@ -107,7 +106,7 @@ def users_edit(user_id):
 @app.route('/users/<int:user_id>', methods=['PATCH'])
 def users_update(user_id):
     """update user info and return to user show page"""
-    found_user = User.query.get(user_id)
+    found_user = User.query.get_or_404(user_id)
     found_user.first_name = request.form['first_name'],
     found_user.last_name = request.form['last_name'],
     found_user.img_url = request.form['img_url']
@@ -119,7 +118,7 @@ def users_update(user_id):
 @app.route('/users/<int:user_id>', methods=['DELETE'])
 def users_destroy(user_id):
     """delete user"""
-    found_user = User.query.get(user_id)
+    found_user = User.query.get_or_404(user_id)
     db.session.delete(found_user)
     db.session.commit()
     return redirect(url_for("users_index"))
@@ -128,15 +127,16 @@ def users_destroy(user_id):
 @app.route('/users/<int:user_id>/messages')
 def messages_index(user_id):
     """show all messages for user"""
-    found_user = User.query.get(user_id)
+    found_user = User.query.get_or_404(user_id)
     return render_template('messages/index.html', user=found_user)
 
 
 @app.route('/users/<int:user_id>/messages/new')
 def messages_new(user_id):
     """show new message form"""
-    found_user = User.query.get(user_id)
-    return render_template('messages/new.html', user=found_user)
+    found_user = User.query.get_or_404(user_id)
+    tags = Tag.query.all()
+    return render_template('messages/new.html', user=found_user, tags=tags)
 
 
 @app.route('/users/<int:user_id>/messages', methods=['POST'])
@@ -144,73 +144,91 @@ def messages_create(user_id):
     """create new message and add to db"""
     content = request.form['message_content']
     new_message = Message(content=content, user_id=user_id)
+    tag_ids = [int(num) for num in request.form.getlist('tags')]
+    new_message.tags = Tag.query.filter(Tag.id.in_(tag_ids))
     db.session.add(new_message)
     db.session.commit()
     return redirect(url_for('messages_index', user_id=user_id))
 
 
-@app.route('/users/<int:user_id>/messages/<int:message_id>', methods=['GET'])
-def messages_show(user_id, message_id):
+@app.route('/messages/<int:message_id>')
+def messages_show(message_id):
     """show specific message"""
-    found_user = User.query.get(user_id)
+
     found_message = Message.query.get_or_404(message_id)
-    return render_template(
-        '/messages/show.html', user=found_user, message=found_message)
+    return render_template('/messages/show.html', message=found_message)
 
 
-@app.route(
-    '/users/<int:user_id>/messages/<int:message_id>', methods=['DELETE'])
-def messages_destroy(user_id, message_id):
+@app.route('/messages/<int:message_id>', methods=['DELETE'])
+def messages_destroy(message_id):
     """delete a message"""
     found_message = Message.query.get_or_404(message_id)
+    user = found_message.user
     db.session.delete(found_message)
     db.session.commit()
-    return redirect(url_for('messages_index', user_id=user_id))
+    return redirect(url_for('messages_index', user_id=user.id))
 
 
-@app.route(
-    '/users/<int:user_id>/messages/<int:message_id>/edit', methods=['GET'])
-def messages_editform(user_id, message_id):
-    found_user = User.query.get(user_id)
+@app.route('/messages/<int:message_id>/edit')
+def messages_editform(message_id):
     found_message = Message.query.get_or_404(message_id)
+    tags = Tag.query.all()
     return render_template(
-        'messages/edit.html', user=found_user, message=found_message)
+        'messages/edit.html', message=found_message, tags=tags)
 
 
-@app.route('/tags', methods=['GET'])
+@app.route('/messages/<int:message_id>', methods=['PATCH'])
+def messages_update(message_id):
+    """hand messages_editform and update message info"""
+    found_message = Message.query.get_or_404(message_id)
+    found_message.content = request.form['message_content']
+    tag_ids = [int(num) for num in request.form.getlist('tags')]
+    found_message.tags = Tag.query.filter(Tag.id.in_(tag_ids))
+    user = found_message.user
+    db.session.add(found_message)
+    db.session.commit()
+    return redirect(url_for('messages_index', user_id=user.id))
+
+
+@app.route('/tags')
 def tags_index():
+    """Show all tags"""
     tags = Tag.query.all()
     return render_template('tags/index.html', tags=tags)
 
 
-@app.route('/tags/new', methods=['GET'])
+@app.route('/tags/new')
 def tags_new():
     """show new tag form"""
-    return render_template('tags/new.html')
+    messages = Message.query.all()
+    return render_template('tags/new.html', messages=messages)
 
 
 @app.route('/tags', methods=['POST'])
 def tags_create():
     """handle new tag form"""
-    content = request.form['tag_content']
+    content = request.form.get('tag_content')
     new_tag = Tag(content=content)
+    message_ids = [int(num) for num in request.form.getlist("messages")]
+    new_tag.messages = Message.query.filter(Message.id.in_(message_ids))
     db.session.add(new_tag)
     db.session.commit()
     return redirect(url_for('tags_index'))
 
 
-@app.route('/tags/<int:tag_id>', methods=['GET'])
+@app.route('/tags/<int:tag_id>')
 def tags_show(tag_id):
     """show individual tag"""
     found_tag = Tag.query.get_or_404(tag_id)
     return render_template('tags/show.html', tag=found_tag)
 
 
-@app.route('/tags/<int:tag_id>/edit', methods=['GET'])
+@app.route('/tags/<int:tag_id>/edit')
 def tags_editform(tag_id):
     """show edit form"""
     found_tag = Tag.query.get_or_404(tag_id)
-    return render_template('tags/edit.html', tag=found_tag)
+    messages = Message.query.all()
+    return render_template('tags/edit.html', tag=found_tag, messages=messages)
 
 
 @app.route('/tags/<int:tag_id>', methods=['PATCH'])
@@ -218,6 +236,8 @@ def tags_update(tag_id):
     """update tag info and return to tag show page"""
     found_tag = Tag.query.get_or_404(tag_id)
     found_tag.content = request.form['tag_content']
+    message_ids = [int(num) for num in request.form.getlist("messages")]
+    found_tag.messages = Message.query.filter(Message.id.in_(message_ids))
     db.session.add(found_tag)
     db.session.commit()
     return redirect(url_for('tags_index'))
@@ -229,7 +249,7 @@ def tags_destroy(tag_id):
     found_tag = Tag.query.get_or_404(tag_id)
     db.session.delete(found_tag)
     db.session.commit()
-    return render_template(url_for('tags_index'))
+    return redirect(url_for('tags_index'))
 
 
 @app.errorhandler(404)

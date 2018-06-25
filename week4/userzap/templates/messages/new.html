@@ -1,17 +1,28 @@
 {% extends 'base.html' %}
 
+{% block content %}
+
 <h2>Write New Message</h2>
 
-{% block content %}
 <form action="{{ url_for('messages_index', user_id=user.id)}}" method='POST'>
   <div>
     <label for"message_content">Message:
     </label>
     <input id="message_content" name="message_content" type="text" placeholder="write new message here"/>
+  
+  <h6> Tags </h6>  
+  {% for tag in tags %}
+  <div>
+    <input type="checkbox" value="{{ tag.id }}" id="tag_{{ tag.id }}" name="tags">
+    <label for="tag_{{ tag.id }}">
+        <p>{{ tag.content }}</p>
+      </label>
+    </div>
+    {% endfor %}
   </div>
   
   </div>
-  <button type="submit">Add Message</button>
+  <button type="submit">Add Message for {{ user.first_name}}</button>
   </form>
 
 {% endblock%}

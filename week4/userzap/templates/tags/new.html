@@ -1,15 +1,27 @@
 {% extends 'base.html' %}
 
+{% block content %}
+
 <h2>Create New Tag</h2>
 
-{% block content %}
 <form action="{{ url_for('tags_index')}}" method='POST'>
   <div>
     <label for"tag_content">Tag:
     </label>
-    <input id="tag_content" name="tag_content" type="text" placeholder="new tag"/>
+    <input id="tag_content" name="tag_content" type="text" placeholder="new tag">
   </div>
   
+<div>
+  <h6>Messages:</h6>
+  {% for message in messages %}
+  <input type="checkbox" value="{{ message.id }}" id="message_{{ message.id }}" name="messages">
+  <label for="message_{{ message.id }}">
+    "{{ message.content }} - {{ message.user.first_name }} {{ message.user.last_name }}"
+  </label>
+  {% endfor %}
+</div>
+
+
   </div>
   <button type="submit" class="btn btn-primary">Create Tag</button>
   </form>

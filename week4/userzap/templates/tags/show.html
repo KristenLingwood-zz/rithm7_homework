@@ -1,13 +1,11 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h3>Tag Info</h3>
+<h2>Messages with {{ tag.content }} tags:</h2>
 <div>
-  <ul>
-    <li>Tag: {{ tag.content }}:</li>
-    </ul>
-  </div>
-
+  {% for message in tag.messages %}
+  <a href="{{ url_for('messages_show', message_id=message.id) }}">{{ message.content }}</a> - {{ message.user.first_name }} {{ message.user.last_name}}
+  {% endfor %}
 <div>
   
 </div>

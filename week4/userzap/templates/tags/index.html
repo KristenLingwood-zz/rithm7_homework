@@ -5,7 +5,7 @@
 
 {% for tag in tags %}
 
-<li><a href="{{ url_for('tags_show', tag_id=tag.id) }}"></a>{{ tag.content }}</a></li>
+<li><a href="{{ url_for('tags_show', tag_id=tag.id) }}">{{ tag.content }}</a></li>
 
 {% endfor %}
 

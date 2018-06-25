@@ -4,19 +4,31 @@
 
 <h4>Edit Message</h4>
 
-<form action="{{ url_for('messages_index', user_id=user.id)}}" method='POST'>
+<form action="{{ url_for('messages_show', message_id=message.id)}}?_method=PATCH" method='POST'>
   <div>
     <label for"message_content">Message:
     </label>
-    <input id="message_content" name="message_content" type="text" placeholder="Edit message here"/>
+    <input id="message_content" name="message_content" type="text" placeholder="Edit message here" value="{{ message.content }}">
   </div>
   
+<h6>Tags</h6>
+{% for tag in tags %}
+  <input type="checkbox" value="{{ tag.id }}" id="tag_{{ tag.id }}" name="tags"
+
+  {% if tag in message.tags %}
+   checked
+  {% endif %}
+  >
+  <label for"tag_{{ tag.id }}">
+    <p>{{ tag.content }}</p>
+  </label>
+{% endfor %}
   </div>
   <button type="submit" class="btn btn-success">Update Message</button>
   </form>
 
   <div>
-      <form action="{{ url_for('messages_destroy', user_id=user.id, message_id=message.id) }}?_method=DELETE" method='POST'>
+      <form action="{{ url_for('messages_destroy', message_id=message.id) }}?_method=DELETE" method='POST'>
       <button type="submit" class="btn btn-danger btn-sm">DELETE MESSAGE</button>
       </form>
     </div>
