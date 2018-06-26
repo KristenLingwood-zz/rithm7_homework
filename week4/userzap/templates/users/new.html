@@ -4,6 +4,16 @@
 <h2>Create New User</h2>
 <form action="{{ url_for('users_index')}}" method='POST'>
   <div>
+      <label for"username">Username:
+      </label>
+      <input id="username" name="username" type="text" placeholder="create a username"/>
+  </div>
+  <div>
+      <label for"password">password:
+      </label>
+      <input id="password" name="password" type="text" placeholder="create a password"/>
+  </div>
+  <div>
     <label for"first_name">First Name:
     </label>
     <input id="first_name" name="first_name" type="text" placeholder="first name"/>

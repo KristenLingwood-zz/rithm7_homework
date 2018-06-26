@@ -1,13 +1,13 @@
-import psycopg2
-from flask import Flask, render_template, redirect, request, url_for
+from flask import Flask, render_template, redirect, request, url_for, session
 from flask_modus import Modus
 from flask_debugtoolbar import DebugToolbarExtension
 from flask_sqlalchemy import SQLAlchemy
+from flask_bcrypt import Bcrypt
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = "abc123"
 modus = Modus(app)
-# toolbar = DebugToolbarExtension(app)
+toolbar = DebugToolbarExtension(app)
 
 DB = "postgresql://localhost/userzap"
 
@@ -16,17 +16,40 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True
 
 db = SQLAlchemy(app)
+bcrypt = Bcrypt()
 
 
 class User(db.Model):
     __tablename__ = "users"
 
     id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.Text, nullable=False, unique=True)
+    password = db.Column(db.Text, nullable=False)
     first_name = db.Column(db.Text, nullable=False)
     last_name = db.Column(db.Text, nullable=False)
     img_url = db.Column(db.Text)
     messages = db.relationship(
         'Message', backref='user', lazy="dynamic", cascade="all,delete")
+
+    @classmethod
+    def register(cls, username, password):
+        """register a user and hash their password"""
+        # take password and generate a bcrypt hash, saved to var hashed
+        hashed = bcrypt.generate_password_hash(password)
+        hashed_utf8 = hashed.decode("utf8")
+        return cls(username=username, password=hashed_utf8)
+
+    @classmethod
+    def authenticate(cls, username, password):
+        """valid if user exists and password is correct"""
+        user = User.query.filter_by(username=username).first()
+        # if user exists
+        if user:
+            # if password is correct
+            if bcrypt.check_password_hash(user.password, password):
+                return user
+
+        return False
 
 
 class Message(db.Model):
@@ -80,16 +103,51 @@ def users_new():
 @app.route('/users', methods=["POST"])
 def users_create():
     """create new user from form and add to db"""
-    fname = first_name = request.form['first_name']
+    username = request.form.get("username")
+    password = request.form.get("password")
+    new_user = User.register(username=username, password=password)
+    fname = request.form['first_name']
     lname = request.form['last_name']
     img = request.form['img_url']
     if fname == "":
         raise ValueError('First name must not be blank')
     if lname == "":
         raise ValueError('Last name must not be blank')
-    new_user = User(first_name=fname, last_name=lname, img_url=img)
+    new_user.first_name = fname
+    new_user.last_name = lname,
+    new_user.img_url = img,
     db.session.add(new_user)
     db.session.commit()
+    return redirect(url_for('users_index'))
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def users_login():
+    """handle log in form. Authenticate and redirect to secret welcome page"""
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+        logged_in_user = User.authenticate(username, password)
+        if logged_in_user:
+            session['user_id'] = logged_in_user.id
+            return redirect(url_for('users_welcome', user=logged_in_user))
+
+    return render_template('/users/login.html')
+
+
+@app.route('/users/welcome')
+def users_welcome():
+    """show welcome form for logged in user"""
+    if session['user_id']:
+        user = User.query.filter_by(id=session['user_id']).first()
+        return render_template('users/welcome.html', user=user)
+
+
+@app.route('/users/logout')
+def users_logout():
+    """Logout a user"""
+    if session['user_id']:
+        del session['user_id']
     return redirect(url_for('users_index'))
 
 

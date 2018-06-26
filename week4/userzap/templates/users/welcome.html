@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h3>Welcome {{ user.username }}!</h3>
+<h6>You are logged in. The secret answer is 42.</h6>
+<div>
+  <ul>
+    <li>Username: {{ user.username }}</li>
+    <li>First Name: {{ user.first_name }}</li>
+    <li>Last Name: {{ user.last_name }}</li>
+    </ul>
+  </div>
+<div>
+  <img src="{{ user.img_url }}">
+</div>
+
+<div>
+  
+</div>
+
+<div>
+    <form action="{{ url_for('users_edit', user_id=user.id) }}" method='GET'>
+    <button type="submit" class="btn btn-success">Edit User Info</button>
+    </form>
+  </div>
+
+  <div>
+      <form action="{{ url_for('messages_new', user_id=user.id) }}" method='GET'>
+      <button type="submit" class="btn btn-info">Write New Message</button>
+      </form>
+    </div>
+
+<div>
+    <form action="{{ url_for('messages_index', user_id=user.id) }}" method='GET'>
+    <button type="submit" class="btn btn-primary">See {{ user.first_name }}'s messages</button>
+    </form>
+  </div>
+
+  <div>
+        <form action="{{ url_for('users_logout', user_id=user.id) }}" method='GET'>
+        <button type="submit" class="btn btn-danger">LOGOUT {{ user.first_name }}</button>
+        </form>
+      </div>
+
+{% endblock %}

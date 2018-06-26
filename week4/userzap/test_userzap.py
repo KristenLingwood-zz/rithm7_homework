@@ -1,4 +1,4 @@
-from app import app, User, DB, db, Message
+from app import app, User, Message
 import unittest
 
 
@@ -24,6 +24,8 @@ class UserZapIntegrationTestCase(unittest.TestCase):
         result = client.post(
             '/users',
             data={
+                'username': 'Jane',
+                'password': 'Smith',
                 'first_name': 'Jane',
                 'last_name': 'Smith',
                 'img_url': 'http://some-image.com/'
@@ -95,7 +97,7 @@ class UserZapIntegrationTestCase(unittest.TestCase):
     def test_users_update_prepop(self):
         """ensure that edit message form is prepopulated"""
         client = app.test_client()
-        #hard coded message id
+        # hard coded message id
         result = client.get('messages/26/edit')
         self.assertIn(b'value="testing for form prepop"', result.data)
 
