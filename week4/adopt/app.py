@@ -7,14 +7,14 @@ from wtforms.validators import InputRequired, Optional, URL, NumberRange
 import requests
 import os
 import websiteconfig
-app.debug = websiteconfig.DEBUG
-app.pf_api_key = websiteconfig.pf_api_key
 
 PLACEHOLDER_IMG = "https://image.freepik.com/free-vector/unicorn-background-design_1324-79.jpg"
 
 app = Flask(__name__)
 
+app.debug = websiteconfig.DEBUG
 app.config['SECRET_KEY'] = "abc123"
+app.pf_api_key = websiteconfig.pf_api_key
 toolbar = DebugToolbarExtension(app)
 
 DB = "postgresql://localhost/adopt"
@@ -71,6 +71,7 @@ class AddPetEditForm(FlaskForm):
 
 
 def get_random_petfinder_pet():
+    """get random pet from petfinder and return dict of info"""
     r = requests.get("http://api.petfinder.com/pet.getRandom", {
         "key": pf_api_key,
         "format": "json",
@@ -92,6 +93,10 @@ def pets_index():
         'photo': pf_pet['media']['photos']['photo'][1].get('$t'),
         'description': pf_pet.get('description').get('$t')
     }
+    # if info['media']['photos']['photo']:
+    #     photo_url = info['media']['photos']['photo'][1].get('$t')
+    # else: 
+    #     photo_url = generic image
 
     return render_template('index.html', pets=pets, pf_pet_info=pf_pet_info)
 
@@ -136,6 +141,7 @@ def pets_edit(pet_id):
 
 @app.route("/api/pets/<int:pet_id>", methods=['GET'])
 def api_get_pet(pet_id):
+    """return json string for given pet in db"""
     pet = Pet.query.get_or_404(pet_id)
     info = {
         "name": pet.name,

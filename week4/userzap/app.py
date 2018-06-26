@@ -7,7 +7,7 @@ from flask_sqlalchemy import SQLAlchemy
 app = Flask(__name__)
 app.config['SECRET_KEY'] = "abc123"
 modus = Modus(app)
-toolbar = DebugToolbarExtension(app)
+# toolbar = DebugToolbarExtension(app)
 
 DB = "postgresql://localhost/userzap"
 
@@ -80,10 +80,14 @@ def users_new():
 @app.route('/users', methods=["POST"])
 def users_create():
     """create new user from form and add to db"""
-    new_user = User(
-        first_name=request.form['first_name'],
-        last_name=request.form['last_name'],
-        img_url=request.form['img_url'])
+    fname = first_name = request.form['first_name']
+    lname = request.form['last_name']
+    img = request.form['img_url']
+    if fname == "":
+        raise ValueError('First name must not be blank')
+    if lname == "":
+        raise ValueError('Last name must not be blank')
+    new_user = User(first_name=fname, last_name=lname, img_url=img)
     db.session.add(new_user)
     db.session.commit()
     return redirect(url_for('users_index'))
@@ -112,7 +116,7 @@ def users_update(user_id):
     found_user.img_url = request.form['img_url']
     db.session.add(found_user)
     db.session.commit()
-    return redirect(url_for('users_index'))
+    return redirect(url_for('users_show', user_id=found_user.id))
 
 
 @app.route('/users/<int:user_id>', methods=['DELETE'])
